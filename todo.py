@@ -1,5 +1,23 @@
 import requests
 import json
-data=request.get("https://github.com/Aswathi1302/Todo_app.git").txt
+import mysql.connector
+import sys
+try:
+    mydb=mysql.connector.connect(host='localhost',user='root',password='',database='tododb')
+except mysql.connector.Error as e:
+   sys.exit("mysql connection error")   
+mycursor=mydb.cursor() 
+
+
+data=requests.get("https://jsonplaceholder.typicode.com/todos").text
 data_info=json.loads(data)
 print(data_info)
+
+for i in data_info:
+    if(i['completed']==False):
+        id =str(i['userId'])
+        complete=str(i['completed'])
+        sql="INSERT INTO `todo`(`userid`, `title`, `completed`) VALUES ('"+id+"','"+i['title']+"','"+complete+"')" 
+        mycursor.execute(sql)
+        mydb.commit()
+    print("data inserted successfully....",i['userId'])
